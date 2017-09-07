@@ -20,6 +20,8 @@ use Guzzle\Service\Resource\Model as GuzzleModel;
 abstract class Workflow extends \yii\base\Object
 {
     const CHILD_POLICY_TERMINATE = 'TERMINATE';
+    const CHILD_POLICY_REQUEST_CANCEL = 'REQUEST_CANCEL';
+    const CHILD_POLICY_ABANDON = 'ABANDON';
 
     /**
      * @var string
@@ -54,7 +56,7 @@ abstract class Workflow extends \yii\base\Object
     /**
      * @var string
      */
-    public $childPolicy = self::CHILD_POLICY_TERMINATE;
+    public $childPolicy = self::CHILD_POLICY_ABANDON;
 
     /**
      * @var WorkflowEvent[]
@@ -67,9 +69,28 @@ abstract class Workflow extends \yii\base\Object
     public $workflowExecution;
 
     /**
+     * @var integer
+     */
+    public $previousStartedEventId;
+
+    /**
+     * @var integer
+     */
+    public $startedEventId;
+
+    /**
      * @var array
      */
     private $_decisions = [];
+
+    /**
+     * @return DirectedAcylicGraph|null
+     * @throws \yii\base\Exception If not overrided yet
+     */
+    public static function getDirectedAcylicGraph()
+    {
+        throw new \yii\base\Exception('Not overrided yet');
+    }
 
     /**
      * Initalize.

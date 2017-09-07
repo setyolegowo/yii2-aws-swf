@@ -138,6 +138,8 @@ trait Workflow
             'version' => $model['workflowType']['version'],
             'taskToken' => $model['taskToken'],
             'workflowExecution' => $model['workflowExecution'],
+            'previousStartedEventId' => $model['previousStartedEventId'],
+            'startedEventId' => $model['startedEventId'],
         ]);
     }
 }

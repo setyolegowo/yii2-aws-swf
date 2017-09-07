@@ -9,6 +9,7 @@ namespace app\components\swf\workflows;
 
 use Yii;
 use UrbanIndo\Yii2\Aws\Swf\Base\Decision;
+use UrbanIndo\Yii2\Aws\Swf\Base\DirectedAcylicGraph;
 use UrbanIndo\Yii2\Aws\Swf\Base\WorkflowEvent;
 
 /**
@@ -17,6 +18,16 @@ use UrbanIndo\Yii2\Aws\Swf\Base\WorkflowEvent;
  */
 class HelloWorld extends \UrbanIndo\Yii2\Aws\Swf\Base\Workflow
 {
+    /**
+     * @return DirectedAcylicGraph
+     */
+    public static function getDirectedAcylicGraph()
+    {
+        return new DirectedAcylicGraph([
+            'PrintHelloWorld'
+        ]);
+    }
+
     /**
      * @param WorkflowEvent $event Event.
      * @return Decision|null

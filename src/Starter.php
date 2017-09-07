@@ -31,29 +31,12 @@ class Starter extends \yii\base\Object
     /**
      * @var string
      */
-    public $input = 'Test';
-
-    /**
-     * Execution start to close timeout in second.
-     * @var integer
-     */
-    public $executionStartToCloseTimeout = 300;
-
-    /**
-     * Task start to close timeout in second.
-     * @var integer
-     */
-    public $taskStartToCloseTimeout = 300;
+    public $input;
 
     /**
      * @var array
      */
     public $additionalOptions = [];
-
-    /**
-     * @var array
-     */
-    private $_workFlowType;
 
     /**
      * @return void
@@ -63,9 +46,7 @@ class Starter extends \yii\base\Object
     {
         parent::init();
 
-        if (!empty($this->workflow) && $this->workflow instanceof Workflow) {
-            $this->_workFlowType = $this->workflow->getWorkflowType();
-        } else {
+        if (empty($this->workflow) || !($this->workflow instanceof Workflow)) {
             throw new \yii\base\InvalidParamException('Property workflow must instance of Workflow');
         }
         if (empty($this->workflowId)) {
@@ -80,10 +61,8 @@ class Starter extends \yii\base\Object
     {
         return array_merge($this->additionalOptions, [
             'workflowId' => $this->workflowId,
-            'workflowType' => $this->_workFlowType,
+            'workflowType' => $this->workflow->getWorkflowType(),
             'input' => $this->input,
-            'executionStartToCloseTimeout' => $this->executionStartToCloseTimeout,
-            'taskStartToCloseTimeout' => $this->taskStartToCloseTimeout,
         ]);
     }
 }

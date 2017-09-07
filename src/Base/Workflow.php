@@ -64,6 +64,11 @@ abstract class Workflow extends \yii\base\Object
     /**
      * @var array
      */
+    public $workflowExecution;
+
+    /**
+     * @var array
+     */
     private $_decisions = [];
 
     /**
@@ -77,6 +82,18 @@ abstract class Workflow extends \yii\base\Object
         if (empty($this->name)) {
             $this->name = get_called_class();
         }
+        if (!static::isVersionValid($this->version)) {
+            throw new \yii\base\InvalidParamException('Workflow version is not valid.');
+        }
+    }
+
+    /**
+     * @return boolean
+     */
+    public static function isVersionValid($version)
+    {
+        $version; // unused
+        return true;
     }
 
     /**
@@ -104,7 +121,6 @@ abstract class Workflow extends \yii\base\Object
                 $this->_decisions[] = $decision->toArray();
             }
         }
-        var_dump($this->_decisions);
     }
 
     /**

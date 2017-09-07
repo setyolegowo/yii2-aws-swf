@@ -62,6 +62,11 @@ abstract class Activity extends \yii\base\Object
     public $input;
 
     /**
+     * @var array
+     */
+    public $workflowExecution;
+
+    /**
      * Default value is empty array.
      * @var array
      */
@@ -82,6 +87,18 @@ abstract class Activity extends \yii\base\Object
         if (empty($this->name)) {
             $this->name = get_called_class();
         }
+        if (!static::isVersionValid($this->version)) {
+            throw new \yii\base\InvalidParamException('Activity version is not valid.');
+        }
+    }
+
+    /**
+     * @return boolean
+     */
+    public static function isVersionValid($version)
+    {
+        $version; // unused
+        return true;
     }
 
     /**
@@ -106,6 +123,9 @@ abstract class Activity extends \yii\base\Object
      */
     public function getResultStatus()
     {
+        if (empty($this->_resultStatus)) {
+            throw new \yii\base\InvalidConfigException('Result status cannot be empty');
+        }
         return $this->_resultStatus;
     }
 

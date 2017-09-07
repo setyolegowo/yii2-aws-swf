@@ -23,7 +23,7 @@ class HelloWorld extends \UrbanIndo\Yii2\Aws\Swf\Base\Workflow
      */
     public function decideByEvent(WorkflowEvent $event)
     {
-        if ($event->eventType == 'DecisionTaskStarted') {
+        if ($event->eventType == 'DecisionTaskStarted' && $event->eventId == 3) {
             $activity = Yii::$app->swfClient->getActivityByName('PrintHelloWorld');
 
             return Decision::factory(Decision::DECISION_SCHEDULE_ACTIVITY_TASK, [

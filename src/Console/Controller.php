@@ -48,9 +48,10 @@ class Controller extends \yii\console\Controller
 
     /**
      * Start polling service for decider.
+     * @param boolean $autoRepoll Automatically repoll.
      * @return void
      */
-    public function actionStartDeciderService()
+    public function actionStartDeciderService($autoRepoll = true)
     {
         while (true) {
             $workflow = null;
@@ -59,13 +60,13 @@ class Controller extends \yii\console\Controller
             while (true) {
                 echo "[INFO] Polling...";
                 $retval = $this->swfClient->pollForDecisionTask(array_filter(['nextPageToken' => $nextPageToken]));
+                var_dump($retval);
                 echo " Done\n";
                 if (isset($retval['workflowType'])) {
                     if (is_null($workflow)) {
                         $workflow = $this->swfClient->getWorkflowByGuzzleModel($retval);
-                    } else {
-                        $workflow->pushEvents($retval['events']);
                     }
+                    $workflow->pushEvents($retval['events']);
                 }
                 if (isset($retval['nextPageToken'])) {
                     $nextPageToken = $retval['nextPageToken'];
@@ -78,19 +79,36 @@ class Controller extends \yii\console\Controller
             if (!is_null($workflow)) {
                 printf("[INFO] Running workflow %s\n", get_class($workflow));
                 $workflow->decide();
+                var_dump($workflow);
                 $this->swfClient->submitDecision($workflow);
+            }
+            if (!$autoRepoll) {
+                break;
             }
         }
     }
 
     /**
      * Start polling service for single tasklist.
+     * @param boolean $autoRepoll Automatically repoll.
      * @return void
      */
-    public function actionStartWorkflowService()
+    public function actionStartActivityService($autoRepoll = true)
     {
-        $retval = $this->swfClient->pollForActivityTask();
-        var_dump($retval);
+        while (true) {
+            echo "[INFO] Polling...";
+            $retval = $this->swfClient->pollForActivityTask();
+            echo " Done\n";
+            if (isset($retval['activityType'])) {
+                $activity = $this->swfClient->getActivityByGuzzleModel($retval);
+                printf("[INFO] Running activity %s\n", get_class($activity));
+                $activity->run();
+                $this->swfClient->respondActivity($activity);
+            }
+            if (!$autoRepoll) {
+                break;
+            }
+        }
     }
 
     /**
@@ -107,15 +125,5 @@ class Controller extends \yii\console\Controller
         ]));
 
         var_dump($this->swfClient->startWorkflow($starter));
-    }
-
-    /**
-     * @param \Guzzle\Service\Resource\Model $model Model.
-     * @return Workflow
-     */
-    protected function getWorkflowFromDeciderReturnVal(\Guzzle\Service\Resource\Model $model)
-    {
-        $workflowType = $model['workflowType'];
-        return $this->swfClient->getWorkflowByName($workflowType['name']);
     }
 }

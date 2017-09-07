@@ -18,6 +18,7 @@ class PrintHelloWorld extends \UrbanIndo\Yii2\Aws\Swf\Base\Activity
      */
     public function run()
     {
-        echo "Hello World from Activity!";
+        echo "Hello World from Activity!\n";
+        $this->setResultStatus(static::STATUS_COMPLETED);
     }
 }
